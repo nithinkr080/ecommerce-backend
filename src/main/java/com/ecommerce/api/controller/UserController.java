@@ -3,7 +3,7 @@ package com.ecommerce.api.controller;
 
 import com.ecommerce.api.dto.user.UserDTO;
 import com.ecommerce.api.model.User;
-import com.ecommerce.api.service.UserService;
+import com.ecommerce.api.service.AuthenticateService;
 import com.ecommerce.api.util.response.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,23 +11,26 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("api/v1")
 public class UserController {
 
     @Autowired
-    private UserService userService;
+    private AuthenticateService authenticateService;
 
     @PostMapping("")
     public User getByUserEmailId(@RequestBody UserDTO userDTO){
-        return userService.getByUserEmailId(userDTO);
+        return authenticateService.getByUserEmailId(userDTO);
     }
 
 
-    @PostMapping("/login")
-    public ApiResponse login(@RequestBody UserDTO user) {
-        return userService.login(user);
+    @PostMapping("/signIn")
+    public ApiResponse signIn(@RequestBody UserDTO user) {
+        return authenticateService.signIn(user);
+    }
+
+    @PostMapping("/signUp")
+    public ApiResponse signUp(@RequestBody UserDTO user) {
+        return authenticateService.signUp(user);
     }
 }

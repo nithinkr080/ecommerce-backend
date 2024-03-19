@@ -15,10 +15,11 @@ public class UserDTO {
     @JsonProperty
     private String emailId;
     @JsonProperty
-    private  String password;
+    private String password;
     @JsonProperty
     private String username;
-
+    @JsonProperty
+    private String role;
 }
 
 

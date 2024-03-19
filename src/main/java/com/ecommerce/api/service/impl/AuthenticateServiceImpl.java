@@ -4,7 +4,7 @@ import com.ecommerce.api.constants.MessageConstant;
 import com.ecommerce.api.dto.user.UserDTO;
 import com.ecommerce.api.model.User;
 import com.ecommerce.api.respository.UserRepository;
-import com.ecommerce.api.service.UserService;
+import com.ecommerce.api.service.AuthenticateService;
 import com.ecommerce.api.util.response.ApiResponse;
 import com.ecommerce.api.util.response.MessageResponse;
 import lombok.*;
@@ -15,9 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 @Service
-public class AuthenticateServiceImpl implements UserService {
+public class AuthenticateServiceImpl implements AuthenticateService {
     private static final Logger LOGGER = LogManager.getLogger(AuthenticateServiceImpl.class);
     @Autowired
     final private UserRepository userRepository;
@@ -34,7 +35,6 @@ public class AuthenticateServiceImpl implements UserService {
     }
 
 
-
     @Getter
     @Setter
     @NoArgsConstructor
@@ -43,10 +43,11 @@ public class AuthenticateServiceImpl implements UserService {
     private static class UserDetails {
         private String email;
         private String username;
+        private String role;
     }
 
     @Override
-    public ApiResponse login(UserDTO userDTO) {
+    public ApiResponse signIn(UserDTO userDTO) {
         String email = userDTO.getEmailId();
         String password = userDTO.getPassword();
         if ((email == null || password == null || email.isEmpty()) || password.isEmpty()) {
@@ -55,13 +56,34 @@ public class AuthenticateServiceImpl implements UserService {
         } else {
             boolean isUserExists = userRepository.existsByEmailAndPassword(email, password);
             String name = userRepository.getByUserEmailId(email).getUsername();
+            String role = userRepository.getByUserEmailId(email).getRole();
             if (isUserExists) {
-                UserDetails userDetails = new UserDetails(email, name);
-                return new ApiResponse(HttpServletResponse.SC_OK, new MessageResponse(MessageConstant.USER_EXIST), userDetails);
+                UserDetails userDetails = new UserDetails(email, name, role);
+                return new ApiResponse(HttpServletResponse.SC_OK, new MessageResponse(MessageConstant.SIGN_IN), userDetails);
             } else {
                 return new ApiResponse(HttpServletResponse.SC_NOT_FOUND, new MessageResponse(MessageConstant.USER_DOESNT_EXIST));
             }
         }
 
+    }
+
+    @Override
+    public ApiResponse signUp(@NonNull UserDTO userDTO) {
+        String emailId = userDTO.getEmailId();
+        String password = userDTO.getPassword();
+        String username = userDTO.getUsername();
+        String role = userDTO.getRole();
+        boolean isEmailExists = userRepository.existsByEmail(emailId);
+        UserDetails userDetails = new UserDetails(emailId,username , role);
+        if (isEmailExists) {
+            return new ApiResponse(HttpServletResponse.SC_FORBIDDEN, new MessageResponse(MessageConstant.USER_ALREADY_EXISTS), userDetails);
+        } else {
+            int isInserted = userRepository.insertUser(emailId, username, password, role);
+            if (isInserted == 1) {
+                return new ApiResponse(HttpServletResponse.SC_OK, new MessageResponse(MessageConstant.SIGN_UP), userDetails);
+            } else {
+                return new ApiResponse(HttpServletResponse.SC_FORBIDDEN, new MessageResponse(MessageConstant.SOMETHING_WENT_WRONG));
+            }
+        }
     }
 }
