@@ -6,7 +6,7 @@ import com.ecommerce.api.service.ProductService;
 
 public class ProductServiceImpl implements ProductService {
     @Override
-    public ProductDTO getAllProduct(ProductDTO productDTO) {
+    public ProductDTO getAllProducts(ProductDTO productDTO) {
         return productDTO;
     }
 }

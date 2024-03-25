@@ -22,6 +22,6 @@ public class ProductController {
 
     @PostMapping("/products")
     public User getAllProducts(@RequestBody ProductDTO productDTO) {
-        return productService.getAllProduct(productDTO);
+        return productService.getAllProducts(productDTO);
     }
 }
