@@ -6,22 +6,25 @@ import com.ecommerce.api.model.User;
 import com.ecommerce.api.service.AuthenticateService;
 import com.ecommerce.api.util.response.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/v1")
+@CrossOrigin
 public class UserController {
 
     @Autowired
-    private AuthenticateService authenticateService;
+   final private AuthenticateService authenticateService;
+
+    public UserController(AuthenticateService authenticateService) {
+        this.authenticateService = authenticateService;
+    }
 
     @PostMapping("")
-    public User getByUserEmailId(@RequestBody UserDTO userDTO){
+    public User getByUserEmailId(@RequestBody UserDTO userDTO) {
         return authenticateService.getByUserEmailId(userDTO);
     }
+
 
 
     @PostMapping("/signIn")
