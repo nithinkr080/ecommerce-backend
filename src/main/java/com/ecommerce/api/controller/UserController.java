@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     @Autowired
-   final private AuthenticateService authenticateService;
+    final private AuthenticateService authenticateService;
 
     public UserController(AuthenticateService authenticateService) {
         this.authenticateService = authenticateService;
@@ -26,14 +26,13 @@ public class UserController {
     }
 
 
-
     @PostMapping("/signIn")
-    public ApiResponse signIn(@RequestBody UserDTO user) {
-        return authenticateService.signIn(user);
+    public ApiResponse signIn(@RequestBody UserDTO userDTO) {
+        return authenticateService.signIn(userDTO);
     }
 
     @PostMapping("/signUp")
-    public ApiResponse signUp(@RequestBody UserDTO user) {
-        return authenticateService.signUp(user);
+    public ApiResponse signUp(@RequestBody UserDTO userDTO) {
+        return authenticateService.signUp(userDTO);
     }
 }

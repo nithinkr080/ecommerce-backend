@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.Optional;
 
 @Service
 public class AuthenticateServiceImpl implements AuthenticateService {
@@ -74,7 +73,7 @@ public class AuthenticateServiceImpl implements AuthenticateService {
         String username = userDTO.getUsername();
         String role = userDTO.getRole();
         boolean isEmailExists = userRepository.existsByEmail(emailId);
-        UserDetails userDetails = new UserDetails(emailId,username , role);
+        UserDetails userDetails = new UserDetails(emailId, username, role);
         if (isEmailExists) {
             return new ApiResponse(HttpServletResponse.SC_FORBIDDEN, new MessageResponse(MessageConstant.USER_ALREADY_EXISTS), userDetails);
         } else {
