@@ -8,4 +8,7 @@ import java.util.List;
 
 public interface ProductService {
     ApiResponse getAllProducts();
+
+    Product getProductById(Long id);
+
 }

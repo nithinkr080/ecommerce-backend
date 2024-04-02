@@ -1,8 +1,9 @@
 package com.ecommerce.api.service;
 
 import com.ecommerce.api.model.Customer;
-import com.ecommerce.api.util.response.ApiResponse;
+
+import java.util.List;
 
 public interface CustomerService {
-    Customer getUserById(long id);
+    Customer getCustomerByUserId(Long id);
 }

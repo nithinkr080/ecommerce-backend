@@ -29,4 +29,8 @@ public class ProductServiceImpl implements ProductService {
         List<Product> productDetails = productRepository.getProductDetails();
         return new ApiResponse(HttpServletResponse.SC_OK, new MessageResponse(MessageConstant.PRODUCT_LIST_SUCCESSFULL), productDetails);
     }
+
+    public Product getProductById(Long id) {
+        return productRepository.findById(id);
+    }
 }
