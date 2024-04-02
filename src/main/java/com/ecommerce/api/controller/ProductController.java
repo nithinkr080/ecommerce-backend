@@ -1,13 +1,16 @@
 package com.ecommerce.api.controller;
 
+import com.ecommerce.api.dto.cart.CartDTO;
 import com.ecommerce.api.dto.product.ProductDetailsDTO;
 import com.ecommerce.api.model.Product;
+import com.ecommerce.api.model.ProductDetails;
 import com.ecommerce.api.service.ProductService;
 import com.ecommerce.api.util.response.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("api/v1")
@@ -24,5 +27,15 @@ public class ProductController {
     @GetMapping("/products")
     public ApiResponse getAllProducts() {
         return productService.getAllProducts();
+    }
+
+    @GetMapping("/cart/{userId}")
+    public ApiResponse getCartDetailsById(@PathVariable Long userId) {
+        return productService.getCartDetailsById(userId);
+    }
+
+    @PostMapping("/cart")
+    public ApiResponse updateCart(@RequestBody CartDTO cartDTO) {
+        return productService.updateCart(cartDTO);
     }
 }

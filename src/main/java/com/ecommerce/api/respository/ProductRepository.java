@@ -1,11 +1,13 @@
 package com.ecommerce.api.respository;
 
 import com.ecommerce.api.model.Product;
+import com.ecommerce.api.model.ProductDetails;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
@@ -30,4 +32,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                     "LEFT JOIN User u ON u.user_id = s.user_id;", nativeQuery = true
     )
     List<Product> getProductDetails();
+
+
 }

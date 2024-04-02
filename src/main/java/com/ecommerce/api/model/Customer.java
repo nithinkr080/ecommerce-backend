@@ -42,10 +42,10 @@ public class Customer {
 
 
     // Get cart in list
-    public List<Integer> getCart() {
+    public List<Long> getCart() {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            return objectMapper.readValue(cart, new TypeReference<List<Integer>>() {
+            return objectMapper.readValue(cart, new TypeReference<List<Long>>() {
             });
         } catch (IOException e) {
             e.printStackTrace();
@@ -54,7 +54,7 @@ public class Customer {
     }
 
     // Set cart in list
-    public void setCart(List<Integer> cart) {
+    public void setCart(List<Long> cart) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             this.cart = objectMapper.writeValueAsString(cart);

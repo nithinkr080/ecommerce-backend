@@ -1,6 +1,5 @@
 package com.ecommerce.api.model;
 
-
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class Product {
+public class ProductDetails {
     @Id
     @Column(name = "product_id")
     private Long productId;
@@ -23,18 +22,18 @@ public class Product {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "price")
-    private Long price;
+    @ManyToOne
+    @JoinColumn(name = "seller_id")
+    private Seller seller;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @ManyToOne
-    @JoinColumn(name = "seller_id")
-    private Seller seller;
-    
-
     @Column(name = "image")
     private String image;
+
+    @Column(name = "price")
+    private Long price;
+
 }

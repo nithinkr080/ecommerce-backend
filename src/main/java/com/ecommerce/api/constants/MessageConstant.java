@@ -9,4 +9,8 @@ public class MessageConstant {
     public static final String USER_ALREADY_EXISTS = "User already exists";
     public static final String SOMETHING_WENT_WRONG = "Something went wrong";
     public static final String PRODUCT_LIST_SUCCESSFULL = "Listed product successfully";
+    public static final String CART_LIST_EMPTY = "Cart is empty";
+    public static final String CART_LIST_SUCCESSFULL = "Listed cart successfully";
+
+    public static final String USER_NOT_FOUND = "User not found";
 }

@@ -1,8 +1,12 @@
 package com.ecommerce.api.service.impl;
 
 import com.ecommerce.api.constants.MessageConstant;
-import com.ecommerce.api.dto.product.ProductDetailsDTO;
+import com.ecommerce.api.dto.cart.CartDTO;
+import com.ecommerce.api.model.Customer;
 import com.ecommerce.api.model.Product;
+import com.ecommerce.api.model.ProductDetails;
+import com.ecommerce.api.respository.CustomerRepository;
+import com.ecommerce.api.respository.ProductDetailsRepository;
 import com.ecommerce.api.respository.ProductRepository;
 import com.ecommerce.api.service.ProductService;
 import com.ecommerce.api.util.response.ApiResponse;
@@ -13,16 +17,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductServiceImpl implements ProductService {
     private static final Logger LOGGER = LogManager.getLogger(AuthenticateServiceImpl.class);
     @Autowired
-    private final ProductRepository productRepository;
+    final private ProductRepository productRepository;
+    @Autowired
+    final private CustomerRepository customerRepository;
 
-    public ProductServiceImpl(ProductRepository productRepository) {
+    @Autowired
+    final private ProductDetailsRepository productDetailsRepository;
+
+    public ProductServiceImpl(ProductRepository productRepository, CustomerRepository customerRepository, ProductDetailsRepository productDetailsRepository) {
         this.productRepository = productRepository;
+        this.customerRepository = customerRepository;
+        this.productDetailsRepository = productDetailsRepository;
     }
 
     public ApiResponse getAllProducts() {
@@ -30,7 +43,35 @@ public class ProductServiceImpl implements ProductService {
         return new ApiResponse(HttpServletResponse.SC_OK, new MessageResponse(MessageConstant.PRODUCT_LIST_SUCCESSFULL), productDetails);
     }
 
-    public Product getProductById(Long id) {
-        return productRepository.findById(id);
+    public ApiResponse getCartDetailsById(Long userId) {
+        Customer customer = customerRepository.getCustomerByUserId(userId);
+        if (customer == null) {
+            return new ApiResponse(HttpServletResponse.SC_NOT_FOUND, new MessageResponse(MessageConstant.USER_NOT_FOUND));
+        } else {
+            List<Long> cartIds = customer.getCart();
+            List<ProductDetails> cartList = new ArrayList<>();
+            for (Long productId : cartIds) {
+                Optional<ProductDetails> productDetails = productDetailsRepository.getProductById(productId.longValue());
+                productDetails.ifPresent(cartList::add);
+            }
+            if (cartList.isEmpty()) {
+                return new ApiResponse(HttpServletResponse.SC_OK, new MessageResponse(MessageConstant.CART_LIST_EMPTY), cartList);
+            } else {
+                return new ApiResponse(HttpServletResponse.SC_OK, new MessageResponse(MessageConstant.CART_LIST_SUCCESSFULL), cartList);
+            }
+        }
+    }
+
+    @Override
+    public ApiResponse updateCart(CartDTO cartDTO) {
+        Long userId = cartDTO.getUserId();
+        Customer customer = customerRepository.getCustomerByUserId(userId);
+        List<Long> cartIds = customer.getCart();
+        cartIds.add(cartDTO.getProductId());
+        LOGGER.info("cartIds: " + cartIds);
+        String cartId = cartIds.toString();
+        int updateCart = productDetailsRepository.updateCart(cartId, userId);
+        LOGGER.info("updateCart: " + updateCart);
+        return null;
     }
 }
