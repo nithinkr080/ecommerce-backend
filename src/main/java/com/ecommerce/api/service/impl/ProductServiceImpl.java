@@ -68,10 +68,12 @@ public class ProductServiceImpl implements ProductService {
         Customer customer = customerRepository.getCustomerByUserId(userId);
         List<Long> cartIds = customer.getCart();
         cartIds.add(cartDTO.getProductId());
-        LOGGER.info("cartIds: " + cartIds);
         String cartId = cartIds.toString();
         int updateCart = productDetailsRepository.updateCart(cartId, userId);
-        LOGGER.info("updateCart: " + updateCart);
-        return null;
+        if (updateCart > 0) {
+            return new ApiResponse(HttpServletResponse.SC_OK, new MessageResponse(MessageConstant.ADDED_TO_CART));
+        } else {
+            return new ApiResponse(HttpServletResponse.SC_OK, new MessageResponse(MessageConstant.SOMETHING_WENT_WRONG));
+        }
     }
 }

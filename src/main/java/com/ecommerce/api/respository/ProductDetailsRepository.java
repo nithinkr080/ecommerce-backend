@@ -18,7 +18,7 @@ public interface ProductDetailsRepository extends JpaRepository<ProductDetails, 
     Optional<ProductDetails> getProductById(Long id);
 
     @Modifying
-    @Query(value = "update Customer SET cart = :cartId where customer_id = :id", nativeQuery = true)
+    @Query(value = "update Customer SET cart = :cartId where user_id = :id", nativeQuery = true)
     @Transactional
     int updateCart(String cartId, Long id);
 }
