@@ -33,8 +33,11 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "seller_id")
     private Seller seller;
-    
 
     @Column(name = "image")
     private String image;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private Users users;
 }

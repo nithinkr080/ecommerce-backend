@@ -1,16 +1,11 @@
 package com.ecommerce.api.controller;
 
 import com.ecommerce.api.dto.cart.CartDTO;
-import com.ecommerce.api.dto.product.ProductDetailsDTO;
-import com.ecommerce.api.model.Product;
-import com.ecommerce.api.model.ProductDetails;
 import com.ecommerce.api.service.ProductService;
 import com.ecommerce.api.util.response.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("api/v1")
@@ -18,15 +13,15 @@ import java.util.Optional;
 public class ProductController {
 
     @Autowired
-    final private ProductService productService;
+    private final ProductService productService;
 
     public ProductController(ProductService productService) {
         this.productService = productService;
     }
 
     @GetMapping("/products")
-    public ApiResponse getAllProducts() {
-        return productService.getAllProducts();
+    public ApiResponse getAllProducts(@RequestParam("categoryName") String categoryName) {
+        return productService.getAllProducts(categoryName);
     }
 
     @GetMapping("/cart/{userId}")
@@ -34,7 +29,7 @@ public class ProductController {
         return productService.getCartDetailsById(userId);
     }
 
-    @PostMapping("/cart")
+    @PostMapping("/cart/add")
     public ApiResponse updateCart(@RequestBody CartDTO cartDTO) {
         return productService.updateCart(cartDTO);
     }

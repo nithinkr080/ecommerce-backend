@@ -17,9 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -38,8 +36,9 @@ public class ProductServiceImpl implements ProductService {
         this.productDetailsRepository = productDetailsRepository;
     }
 
-    public ApiResponse getAllProducts() {
-        List<Product> productDetails = productRepository.getProductDetails();
+    public ApiResponse getAllProducts(String categoryName) {
+       LOGGER.info("categoryName: " + categoryName);
+        List<Product> productDetails = productRepository.getProductDetails(categoryName);
         return new ApiResponse(HttpServletResponse.SC_OK, new MessageResponse(MessageConstant.PRODUCT_LIST_SUCCESSFULL), productDetails);
     }
 
@@ -51,7 +50,8 @@ public class ProductServiceImpl implements ProductService {
             List<Long> cartIds = customer.getCart();
             List<ProductDetails> cartList = new ArrayList<>();
             for (Long productId : cartIds) {
-                Optional<ProductDetails> productDetails = productDetailsRepository.getProductById(productId.longValue());
+                LOGGER.info("cartIds: " + cartIds);
+                Optional<ProductDetails> productDetails = productDetailsRepository.getProductById(productId);
                 productDetails.ifPresent(cartList::add);
             }
             if (cartList.isEmpty()) {
@@ -65,15 +65,21 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ApiResponse updateCart(CartDTO cartDTO) {
         Long userId = cartDTO.getUserId();
-        Customer customer = customerRepository.getCustomerByUserId(userId);
-        List<Long> cartIds = customer.getCart();
-        cartIds.add(cartDTO.getProductId());
-        String cartId = cartIds.toString();
-        int updateCart = productDetailsRepository.updateCart(cartId, userId);
-        if (updateCart > 0) {
-            return new ApiResponse(HttpServletResponse.SC_OK, new MessageResponse(MessageConstant.ADDED_TO_CART));
+        Long productId = cartDTO.getProductId();
+        if (productId == null) {
+            return new ApiResponse(HttpServletResponse.SC_NOT_FOUND, new MessageResponse(MessageConstant.PRODUCT_ID_EMPTY));
         } else {
-            return new ApiResponse(HttpServletResponse.SC_OK, new MessageResponse(MessageConstant.SOMETHING_WENT_WRONG));
+            Customer customer = customerRepository.getCustomerByUserId(userId);
+            List<Long> cartIds = customer.getCart();
+            cartIds.add(productId);
+            Collections.sort(cartIds);
+            String cartId = cartIds.toString();
+            int updateCart = productDetailsRepository.updateCart(cartId, userId);
+            if (updateCart > 0) {
+                return new ApiResponse(HttpServletResponse.SC_OK, new MessageResponse(MessageConstant.ADDED_TO_CART), updateCart);
+            } else {
+                return new ApiResponse(HttpServletResponse.SC_OK, new MessageResponse(MessageConstant.SOMETHING_WENT_WRONG), updateCart);
+            }
         }
     }
 }

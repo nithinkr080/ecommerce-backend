@@ -18,7 +18,6 @@ public class Seller {
 
     @Column(name = "company_name")
     private String companyName;
-    
 }
 
 

@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 @Service
 public class AuthenticateServiceImpl implements AuthenticateService {
@@ -43,6 +44,7 @@ public class AuthenticateServiceImpl implements AuthenticateService {
         private String email;
         private String username;
         private String role;
+        private Optional<Long> userId;
     }
 
     @Override
@@ -56,8 +58,9 @@ public class AuthenticateServiceImpl implements AuthenticateService {
             boolean isUserExists = userRepository.existsByEmailAndPassword(email, password);
             String name = userRepository.getByUserEmailId(email).getUsername();
             String role = userRepository.getByUserEmailId(email).getRole();
+            Long userId = userRepository.getByUserEmailId(email).getUserId();
             if (isUserExists) {
-                UserDetails userDetails = new UserDetails(email, name, role);
+                UserDetails userDetails = new UserDetails(email, name, role, Optional.ofNullable(userId));
                 return new ApiResponse(HttpServletResponse.SC_OK, new MessageResponse(MessageConstant.SIGN_IN), userDetails);
             } else {
                 return new ApiResponse(HttpServletResponse.SC_NOT_FOUND, new MessageResponse(MessageConstant.USER_DOESNT_EXIST));
@@ -73,7 +76,7 @@ public class AuthenticateServiceImpl implements AuthenticateService {
         String username = userDTO.getUsername();
         String role = userDTO.getRole();
         boolean isEmailExists = userRepository.existsByEmail(emailId);
-        UserDetails userDetails = new UserDetails(emailId, username, role);
+        UserDetails userDetails = new UserDetails(emailId, username, role, Optional.empty());
         if (isEmailExists) {
             return new ApiResponse(HttpServletResponse.SC_FORBIDDEN, new MessageResponse(MessageConstant.USER_ALREADY_EXISTS), userDetails);
         } else {

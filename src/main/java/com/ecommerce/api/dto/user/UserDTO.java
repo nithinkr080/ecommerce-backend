@@ -13,6 +13,8 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 public class UserDTO {
     @JsonProperty
+    private String userId;
+    @JsonProperty
     private String emailId;
     @JsonProperty
     private String password;
