@@ -1,6 +1,7 @@
 package com.ecommerce.api.service;
 
 import com.ecommerce.api.dto.cart.CartDTO;
+import com.ecommerce.api.dto.product.ProductDetailsDTO;
 import com.ecommerce.api.util.response.ApiResponse;
 
 public interface ProductService {
@@ -10,4 +11,5 @@ public interface ProductService {
 
     ApiResponse updateCart(CartDTO cartDTO);
 
+    ApiResponse insertProduct(ProductDetailsDTO productDetailsDTO);
 }

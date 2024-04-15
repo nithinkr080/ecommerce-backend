@@ -1,6 +1,8 @@
 package com.ecommerce.api.controller;
 
 import com.ecommerce.api.dto.cart.CartDTO;
+import com.ecommerce.api.dto.product.ProductDetailsDTO;
+import com.ecommerce.api.dto.user.UserDTO;
 import com.ecommerce.api.service.ProductService;
 import com.ecommerce.api.util.response.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,5 +34,10 @@ public class ProductController {
     @PostMapping("/cart/add")
     public ApiResponse updateCart(@RequestBody CartDTO cartDTO) {
         return productService.updateCart(cartDTO);
+    }
+
+    @PostMapping("/addProduct")
+    public ApiResponse insertProduct(@RequestBody ProductDetailsDTO productDetailsDTO) {
+        return productService.insertProduct(productDetailsDTO);
     }
 }

@@ -2,6 +2,7 @@ package com.ecommerce.api.service.impl;
 
 import com.ecommerce.api.constants.MessageConstant;
 import com.ecommerce.api.dto.cart.CartDTO;
+import com.ecommerce.api.dto.product.ProductDetailsDTO;
 import com.ecommerce.api.model.Customer;
 import com.ecommerce.api.model.Product;
 import com.ecommerce.api.model.ProductDetails;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.util.*;
 
 @Service
@@ -80,6 +82,22 @@ public class ProductServiceImpl implements ProductService {
             } else {
                 return new ApiResponse(HttpServletResponse.SC_OK, new MessageResponse(MessageConstant.SOMETHING_WENT_WRONG), updateCart);
             }
+        }
+    }
+
+    @Override
+    public ApiResponse insertProduct(ProductDetailsDTO productDetailsDTO) {
+        Long sellerId = productDetailsDTO.getSellerId();
+        String name = productDetailsDTO.getProductName();
+        String description = productDetailsDTO.getDescription();
+        BigDecimal price = productDetailsDTO.getPrice();
+        Long categoryId = productDetailsDTO.getCategoryId();
+        String image = productDetailsDTO.getImage();
+        int insertProduct = productRepository.insertProduct(sellerId, name, description, price, categoryId, image);
+        if (insertProduct > 0) {
+            return new ApiResponse(HttpServletResponse.SC_OK, new MessageResponse(MessageConstant.ADDED_PRODUCT), insertProduct);
+        } else {
+            return new ApiResponse(HttpServletResponse.SC_OK, new MessageResponse(MessageConstant.SOMETHING_WENT_WRONG), insertProduct);
         }
     }
 }

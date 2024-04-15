@@ -1,10 +1,13 @@
 package com.ecommerce.api.respository;
 
 import com.ecommerce.api.model.Product;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 
@@ -32,5 +35,12 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     )
 
     List<Product> getProductDetails(String categoryName);
+
+
+    @Modifying
+    @Query(value = "INSERT INTO product (seller_id, name, description, price, category_id, image)\n" +
+            "VALUES (:sellerId, :name ,:description , :price, :categoryId, :image)", nativeQuery = true)
+    @Transactional
+    int insertProduct(Long sellerId, String name, String description, BigDecimal price, Long categoryId, String image);
 
 }
