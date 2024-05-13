@@ -8,6 +8,9 @@ import com.ecommerce.api.util.response.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 
 @RestController
 @RequestMapping("api/v1")
@@ -22,8 +25,8 @@ public class ProductController {
     }
 
     @GetMapping("/products")
-    public ApiResponse getAllProducts(@RequestParam("categoryName") String categoryName) {
-        return productService.getAllProducts(categoryName);
+    public ApiResponse getAllProducts(@RequestParam("categoryName") String categoryName,  @RequestParam("sellerId") String sellerId) {
+        return productService.getAllProducts(categoryName, sellerId);
     }
 
     @GetMapping("/cart/{userId}")
@@ -39,5 +42,15 @@ public class ProductController {
     @PostMapping("/addProduct")
     public ApiResponse insertProduct(@RequestBody ProductDetailsDTO productDetailsDTO) {
         return productService.insertProduct(productDetailsDTO);
+    }
+
+    @GetMapping("/deleteProduct")
+    public ApiResponse deleteProduct(@RequestParam("productId") Long productId) {
+        return productService.deleteProduct(productId);
+    }
+
+    @PostMapping("/cart/remove")
+    public ApiResponse removeCartProduct(@RequestBody CartDTO cartDTO) {
+        return productService.updateCart(cartDTO);
     }
 }

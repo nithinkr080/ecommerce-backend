@@ -5,9 +5,12 @@ import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -31,10 +34,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                     "FROM Product p \n" +
                     "LEFT JOIN Category c ON c.category_id = p.category_id\n" +
                     "LEFT JOIN Seller s ON s.seller_id = p.seller_id \n" +
-                    "LEFT JOIN User u ON u.user_id = s.user_id where c.category_name LIKE %:categoryName%", nativeQuery = true
+                    "LEFT JOIN User u ON u.user_id = s.user_id where c.category_name LIKE %:categoryName% and s.seller_id LIKE %:sellerId%", nativeQuery = true
     )
 
-    List<Product> getProductDetails(String categoryName);
+    List<Product> getProductDetails(String categoryName, String sellerId);
 
 
     @Modifying
@@ -42,5 +45,15 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "VALUES (:sellerId, :name ,:description , :price, :categoryId, :image)", nativeQuery = true)
     @Transactional
     int insertProduct(Long sellerId, String name, String description, BigDecimal price, Long categoryId, String image);
+
+    @Modifying
+    @Query(value = "DELETE FROM Product WHERE product_id = :productId", nativeQuery = true)
+    @Transactional
+   int deleteProduct(Long productId);
+
+    @Modifying
+    @Query(value = "UPDATE Customer SET cart = :cartList WHERE user_id = :userId", nativeQuery = true)
+    @Transactional
+    int removeCartProduct(@Param("userId") Long userId, @Param("cartList") String cartList);
 
 }

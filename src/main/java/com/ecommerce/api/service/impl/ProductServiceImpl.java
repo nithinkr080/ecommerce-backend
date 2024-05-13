@@ -38,9 +38,9 @@ public class ProductServiceImpl implements ProductService {
         this.productDetailsRepository = productDetailsRepository;
     }
 
-    public ApiResponse getAllProducts(String categoryName) {
-       LOGGER.info("categoryName: " + categoryName);
-        List<Product> productDetails = productRepository.getProductDetails(categoryName);
+    public ApiResponse getAllProducts(String categoryName, String sellerId) {
+       String stringifySellerId = String.valueOf(sellerId);
+        List<Product> productDetails = productRepository.getProductDetails(categoryName, stringifySellerId);
         return new ApiResponse(HttpServletResponse.SC_OK, new MessageResponse(MessageConstant.PRODUCT_LIST_SUCCESSFULL), productDetails);
     }
 
@@ -66,23 +66,41 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ApiResponse updateCart(CartDTO cartDTO) {
-        Long userId = cartDTO.getUserId();
-        Long productId = cartDTO.getProductId();
-        if (productId == null) {
-            return new ApiResponse(HttpServletResponse.SC_NOT_FOUND, new MessageResponse(MessageConstant.PRODUCT_ID_EMPTY));
-        } else {
-            Customer customer = customerRepository.getCustomerByUserId(userId);
-            List<Long> cartIds = customer.getCart();
-            cartIds.add(productId);
-            Collections.sort(cartIds);
-            String cartId = cartIds.toString();
-            int updateCart = productDetailsRepository.updateCart(cartId, userId);
-            if (updateCart > 0) {
-                return new ApiResponse(HttpServletResponse.SC_OK, new MessageResponse(MessageConstant.ADDED_TO_CART), updateCart);
+        try {
+            String type = cartDTO.getType();
+            LOGGER.info("type: "+ type);
+            if(Objects.equals(type, "add")){
+                Long userId = cartDTO.getUserId();
+                Long productId = cartDTO.getProductId();
+                if (productId == null) {
+                    return new ApiResponse(HttpServletResponse.SC_NOT_FOUND, new MessageResponse(MessageConstant.PRODUCT_ID_EMPTY));
+                } else {
+                    Customer customer = customerRepository.getCustomerByUserId(userId);
+                    List<Long> cartIds = customer.getCart();
+                    cartIds.add(productId);
+                    Collections.sort(cartIds);
+                    String cartId = cartIds.toString();
+                    int updateCart = productDetailsRepository.updateCart(cartId, userId);
+                    if (updateCart > 0) {
+                        return new ApiResponse(HttpServletResponse.SC_OK, new MessageResponse(MessageConstant.ADDED_TO_CART), updateCart);
+                    } else {
+                        return new ApiResponse(HttpServletResponse.SC_OK, new MessageResponse(MessageConstant.SOMETHING_WENT_WRONG), updateCart);
+                    }
+                }
             } else {
-                return new ApiResponse(HttpServletResponse.SC_OK, new MessageResponse(MessageConstant.SOMETHING_WENT_WRONG), updateCart);
+                String cartList = cartDTO.getCartList();
+                Long userId = cartDTO.getUserId();
+                int removeCartProduct = productRepository.removeCartProduct(userId,cartList);
+                if (removeCartProduct > 0) {
+                    return new ApiResponse(HttpServletResponse.SC_OK, new MessageResponse(MessageConstant.REMOVED_FROM_CART), removeCartProduct);
+                } else {
+                    return new ApiResponse(HttpServletResponse.SC_OK, new MessageResponse(MessageConstant.SOMETHING_WENT_WRONG), removeCartProduct);
+                }
             }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
+
     }
 
     @Override
@@ -98,6 +116,17 @@ public class ProductServiceImpl implements ProductService {
             return new ApiResponse(HttpServletResponse.SC_OK, new MessageResponse(MessageConstant.ADDED_PRODUCT), insertProduct);
         } else {
             return new ApiResponse(HttpServletResponse.SC_OK, new MessageResponse(MessageConstant.SOMETHING_WENT_WRONG), insertProduct);
+        }
+    }
+
+    @Override
+    public ApiResponse deleteProduct(Long productId) {
+        LOGGER.info("productId: " + productId);
+        int deleteProduct = productRepository.deleteProduct(productId);
+        if(deleteProduct > 0){
+            return new ApiResponse(HttpServletResponse.SC_OK, new MessageResponse(MessageConstant.DELETED_PRODUCT), deleteProduct);
+        } else {
+            return new ApiResponse(HttpServletResponse.SC_OK, new MessageResponse(MessageConstant.SOMETHING_WENT_WRONG), deleteProduct);
         }
     }
 }

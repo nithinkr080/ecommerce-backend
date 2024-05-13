@@ -15,5 +15,7 @@ public class MessageConstant {
     public static final String ADDED_TO_CART = "Added to cart successfully";
     public static final String PRODUCT_ID_EMPTY = "Product id cannot be empty";
     public static final String FETCHED_SUCCESSFULLY = "Fetched successfully";
-    public  static final String ADDED_PRODUCT = "Added product successfully";
+    public static final String ADDED_PRODUCT = "Added product successfully";
+    public  static final String DELETED_PRODUCT = "Deleted product successfully";
+    public static final String REMOVED_FROM_CART = "Removed item successfully";
 }
