@@ -1,5 +1,6 @@
 package com.ecommerce.api.respository;
 
+import com.ecommerce.api.dto.order.OrderDTO;
 import com.ecommerce.api.model.Product;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,9 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.lang.reflect.Array;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -36,7 +35,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                     "LEFT JOIN Seller s ON s.seller_id = p.seller_id \n" +
                     "LEFT JOIN User u ON u.user_id = s.user_id where c.category_name LIKE %:categoryName% and s.seller_id LIKE %:sellerId%", nativeQuery = true
     )
-
     List<Product> getProductDetails(String categoryName, String sellerId);
 
 
@@ -49,11 +47,18 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Modifying
     @Query(value = "DELETE FROM Product WHERE product_id = :productId", nativeQuery = true)
     @Transactional
-   int deleteProduct(Long productId);
+    int deleteProduct(Long productId);
 
     @Modifying
     @Query(value = "UPDATE Customer SET cart = :cartList WHERE user_id = :userId", nativeQuery = true)
     @Transactional
     int removeCartProduct(@Param("userId") Long userId, @Param("cartList") String cartList);
 
+    @Modifying
+    @Query(value = "update Customer set orders = :orderListJson where user_id = :userId", nativeQuery = true)
+    @Transactional
+    int updateOrder(@Param("userId") Long userId, @Param("orderListJson") String orderListJson);
+
+    @Query(value = "SELECT orders from Customer c where user_id = :userId", nativeQuery = true)
+    String getOrders(@Param("userId") Long userId);
 }

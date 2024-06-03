@@ -35,5 +35,4 @@ public class ProductDetails {
 
     @Column(name = "price")
     private Long price;
-
 }

@@ -1,6 +1,7 @@
 package com.ecommerce.api.controller;
 
 import com.ecommerce.api.dto.cart.CartDTO;
+import com.ecommerce.api.dto.order.OrderDTO;
 import com.ecommerce.api.dto.product.ProductDetailsDTO;
 import com.ecommerce.api.dto.user.UserDTO;
 import com.ecommerce.api.service.ProductService;
@@ -25,7 +26,7 @@ public class ProductController {
     }
 
     @GetMapping("/products")
-    public ApiResponse getAllProducts(@RequestParam("categoryName") String categoryName,  @RequestParam("sellerId") String sellerId) {
+    public ApiResponse getAllProducts(@RequestParam("categoryName") String categoryName, @RequestParam("sellerId") String sellerId) {
         return productService.getAllProducts(categoryName, sellerId);
     }
 
@@ -52,5 +53,20 @@ public class ProductController {
     @PostMapping("/cart/remove")
     public ApiResponse removeCartProduct(@RequestBody CartDTO cartDTO) {
         return productService.updateCart(cartDTO);
+    }
+
+    @PostMapping("/update/order")
+    public ApiResponse updateOrder(@RequestBody CartDTO cartDTO) {
+        return productService.updateOrder(cartDTO);
+    }
+
+    @GetMapping("/orders")
+    public ApiResponse updateOrder(@RequestParam("userId") Long userId) {
+        return productService.getOrders(userId);
+    }
+
+    @GetMapping("/cancel/order")
+    public ApiResponse updateOrder(@RequestParam("orderId") String orderId, @RequestParam("userId") Long userId) {
+        return productService.cancelOrder(orderId, userId);
     }
 }
